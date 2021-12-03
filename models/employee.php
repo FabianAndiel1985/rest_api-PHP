@@ -12,10 +12,7 @@ class Employee {
     public $firstname;
     public $lastname;
     
-
-    
    public function read(){
-        
         $query = "SELECT
                     *
                 FROM
@@ -32,15 +29,13 @@ public function create(){
  
     $stmt = $this->conn->prepare("INSERT INTO ".$this->table_name." (id,firstname,lastname,created_at) VALUES (null,:firstname, :lastname,null)");
   
-    // sanitize
+    
     $this->firstname=htmlspecialchars(strip_tags($this->firstname));
     $this->lastname=htmlspecialchars(strip_tags($this->lastname));
   
-    // bind values
     $stmt->bindParam(":firstname", $this->firstname);
     $stmt->bindParam(":lastname", $this->lastname);
   
-    // execute query
     if($stmt->execute()){
         return true;
     }
@@ -53,14 +48,12 @@ public function update($receivedData){
 
     $stmt = $this->conn->prepare("UPDATE ".$this->table_name." SET firstname = :firstname, lastname = :lastname WHERE id = :id");
 
-    // sanitize
-
      foreach($receivedData as $key => $value){
             $this->$key=htmlspecialchars(strip_tags($this->$key));
             $stmt->bindParam(":".$key, $this->$key);
      }
      
-    // execute query
+
    
     if($stmt->execute()){
         return true;
@@ -68,5 +61,23 @@ public function update($receivedData){
     return false;  
 
 }
+
+public function delete($id){
+
+    $stmt = $this->conn->prepare("DELETE FROM ".$this->table_name." WHERE id = :id");
+    $stmt->bindParam(":id", $id);
+   
+    if($stmt->execute()){
+        return true;
+    }
+    return false;  
+
+}
+
+
+
+
+
+
 
 }

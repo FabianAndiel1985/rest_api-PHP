@@ -2,13 +2,12 @@
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: PUT");
+header("Access-Control-Allow-Methods: DELETE");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-include_once './database.php';
-include_once './employee.php';
-
+include_once 'database.php';
+include_once 'models/employee.php';
 
 $database = new Database();
 
@@ -18,8 +17,10 @@ $db = $database->getConnection();
 $employee = new Employee($db);
 
 $receivedData = json_decode(file_get_contents("php://input"));
+
+
     
-$allowedKeys = ["id","firstname","lastname"];
+$allowedKeys = ["id"];
 
 function checkKeyValidity($receivedData, $allowedKeys) {
         $valueContained = true;
@@ -50,40 +51,20 @@ $keyValidity = checkKeyValidity($receivedData, $allowedKeys);
 
 $valueIsEmpty =  checkValueIsEmpty($receivedData);
 
-
-
 if(
     $keyValidity && $valueIsEmpty
 ){
-
-    
-    foreach($receivedData as $key => $value){
-        $employee->$key = $receivedData->$key;
-    }
-
-
-    if($employee->update($receivedData)){
-
+    $id = $receivedData->id;
+    if($employee->delete($id)){
         http_response_code(201);
-
-        echo json_encode(array("message" => "employee was created"));
+        echo json_encode(array("message" => "employee was deleted"));
     }
       
     else{  
 
         http_response_code(503);
 
-        echo json_encode(array("message" => "Unable to create employee."));
+        echo json_encode(array("message" => "Unable to delete employee."));
     }
   }
   
-// else{
-  
-//     // set response code - 400 bad request
-//     http_response_code(400);
-  
-//     // tell the user
-//     echo json_encode(array("message" => "employee data wasn`t full"));
-// }
-
-

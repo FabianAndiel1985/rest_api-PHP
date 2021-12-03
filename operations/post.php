@@ -6,20 +6,17 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-include_once './database.php';
-include_once './employee.php';
-
+include_once 'database.php';
+include_once 'models/employee.php';
 
 $database = new Database();
 
 $db = $database->getConnection();
   
-
 $employee = new Employee($db);
 
 $perparedStatement = $employee->create();
 
-// get posted data
 $data = json_decode(file_get_contents("php://input"));
   
 if(
@@ -27,7 +24,6 @@ if(
     !empty($data->lastname) 
 ){
   
-    // set product property values
     $employee->firstname = $data->firstname;
     $employee->lastname = $data->lastname;
 
@@ -41,13 +37,11 @@ if(
         echo json_encode(array("message" => "employee was created"));
     }
   
-    // if unable to create the product, tell the user
     else{
   
 
         http_response_code(503);
   
-
         echo json_encode(array("message" => "Unable to create employee."));
     }
 
@@ -55,10 +49,10 @@ if(
   
 else{
   
-    // set response code - 400 bad request
+  
     http_response_code(400);
   
-    // tell the user
+
     echo json_encode(array("message" => "employee data wasn`t full"));
 }
 

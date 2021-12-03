@@ -1,20 +1,23 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-// include database and object files
-include_once './database.php';
-include_once './employee.php';
-  
-// instantiate database and product object
+
+
+include_once 'database.php';
+include_once 'models/employee.php';
+
+
 $database = new Database();
-//connection aktivieren
+
 $db = $database->getConnection();
   
-// initialize object
+
 $employee = new Employee($db);
   
-// read products will be here
+
 $perparedStatement = $employee->read();
+
+
 
 $numOfRows = $perparedStatement->rowCount();
 
@@ -43,10 +46,10 @@ if($numOfRows>0) {
 
 
 else{
-    // set response code - 404 Not found
+   
     http_response_code(404);
   
-    // tell the user no products found
+    
     echo json_encode(
         array("message" => "No employees found.")
     );
